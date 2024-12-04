@@ -13,6 +13,7 @@ class User(db.Model, SerializerMixin):
     _password_hash = db.Column(db.String)
     image_url = db.Column(db.String)
     bio = db.Column(db.String)
+    recipes = db.relationship('Recipe', back_populates = 'user')
 
     @validates('username')
     def validate_username(self, key, username):
@@ -45,6 +46,9 @@ class User(db.Model, SerializerMixin):
 class Recipe(db.Model, SerializerMixin):
     __tablename__ = 'recipes'
     id = db.Column(db.Integer, primary_key = True)
+    title = db.Column(db.String)
+    instructions = db.Column(db.String)
+    minutes_to_complete = db.Column(db.Integer)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    
+    user = db.Relationship('User', back_populates='recipes')
     pass
