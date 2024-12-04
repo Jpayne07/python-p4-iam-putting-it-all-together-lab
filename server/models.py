@@ -13,10 +13,12 @@ class User(db.Model, SerializerMixin):
     _password_hash = db.Column(db.String)
     image_url = db.Column(db.String)
     bio = db.Column(db.String)
-    # __table_args__ = (
-    #     UniqueConstraint('username', name='uq_users_username'),
-    #     CheckConstraint('username IS NOT NULL', name='ck_users_username_not_null'),
-    # )
+
+    @validates('username')
+    def validate_username(self, key, username):
+        if username == '' or username == None:
+            raise ValueError("Username cannot be empty")
+        return username
 
     @hybrid_property
     def password_hash(self):
