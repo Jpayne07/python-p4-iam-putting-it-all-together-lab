@@ -9,17 +9,17 @@ from config import db, bcrypt
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key = True)
-    username = db.Column(db.String, unique = True)
+    username = db.Column(db.String, unique = True, nullable=False)
     _password_hash = db.Column(db.String)
     image_url = db.Column(db.String)
     bio = db.Column(db.String)
     recipes = db.relationship('Recipe', back_populates = 'user')
 
     @validates('username')
-    def validate_username(self, key, username):
-        if username == '' or username == None:
+    def validate_username(self, key, name):
+        if name == '' or name == None:
             raise ValueError("Username cannot be empty")
-        return username
+        return name
 
     @hybrid_property
     def password_hash(self):
@@ -46,9 +46,23 @@ class User(db.Model, SerializerMixin):
 class Recipe(db.Model, SerializerMixin):
     __tablename__ = 'recipes'
     id = db.Column(db.Integer, primary_key = True)
-    title = db.Column(db.String)
+    title = db.Column(db.String, nullable=False)
     instructions = db.Column(db.String)
     minutes_to_complete = db.Column(db.Integer)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     user = db.Relationship('User', back_populates='recipes')
+
+    @validates('title')
+    def validate_title(self, key, name):
+        if name == None:
+            raise ValueError("Recipe title must not be empty")
+        return name
+    
+    @validates('instructions')
+    def validate_instructions(self, key, instructions):
+        if len(instructions) <50:
+            raise ValueError("Instructions must be at least 50 characters long")
+        return instructions
+
+
     pass
