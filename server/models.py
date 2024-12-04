@@ -9,14 +9,14 @@ from config import db, bcrypt
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key = True)
-    username = db.Column(db.String, unique=True, nullable=False, name="username")
+    username = db.Column(db.String, unique = True)
     _password_hash = db.Column(db.String)
     image_url = db.Column(db.String)
     bio = db.Column(db.String)
-    __table_args__ = (
-        UniqueConstraint('username', name='uq_users_username'),
-        CheckConstraint('username IS NOT NULL', name='ck_users_username_not_null'),
-    )
+    # __table_args__ = (
+    #     UniqueConstraint('username', name='uq_users_username'),
+    #     CheckConstraint('username IS NOT NULL', name='ck_users_username_not_null'),
+    # )
 
     @hybrid_property
     def password_hash(self):
