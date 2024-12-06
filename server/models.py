@@ -14,12 +14,7 @@ class User(db.Model, SerializerMixin):
     image_url = db.Column(db.String)
     bio = db.Column(db.String)
     recipes = db.relationship('Recipe', back_populates = 'user')
-
-    @validates('username')
-    def validate_username(self, key, name):
-        if name == '' or name == None:
-            raise ValueError("Username cannot be empty")
-        return name
+    serialize_rules = ('-recipes.user',)
 
     @hybrid_property
     def password_hash(self):
@@ -50,8 +45,8 @@ class Recipe(db.Model, SerializerMixin):
     instructions = db.Column(db.String)
     minutes_to_complete = db.Column(db.Integer)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    user = db.Relationship('User', back_populates='recipes')
-
+    user = db.relationship('User', back_populates='recipes')
+    serialize_rules = ('-user.recipe',)
     @validates('title')
     def validate_title(self, key, name):
         if name == None:
